@@ -2,37 +2,33 @@ import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import geofire, { geohashForLocation } from "geofire-common";
 
 export const Home = () => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   //   const [date, setDate] = useState("");
   const date = new Date();
-  const [longitude, setLongitude] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [userAuth, setUserAuth] = useState("");
-
-  useEffect(() => {
-    const auth = getAuth();
-    setUserAuth(auth);
-    console.log(auth.currentUser.uid);
-    // console.log(firebase.database.ServerValue.TIMESTAMP);
-  }, []);
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
 
   const submitInfo = async () => {
+    const hash = geohashForLocation([parseInt(latitude), parseInt(longitude)]);
+    const auth = getAuth();
+
     try {
-      const docRef = await addDoc(collection(db, userAuth.currentUser.uid), {
+      const docRef = await addDoc(collection(db, auth.currentUser.uid), {
         id,
         name,
         date,
         longitude,
         latitude,
+        geoHash: hash,
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-    console.log(userAuth);
   };
 
   return (
@@ -44,10 +40,10 @@ export const Home = () => {
       Date: <input type="text" value={date} readOnly />
       <br />
       Latitude:{" "}
-      <input type="text" onChange={(e) => setLongitude(e.target.value)} />
+      <input type="number" onChange={(e) => setLongitude(e.target.value)} />
       <br />
       Longitude:{" "}
-      <input type="text" onChange={(e) => setLatitude(e.target.value)} />
+      <input type="number" onChange={(e) => setLatitude(e.target.value)} />
       <br />
       <button onClick={() => submitInfo()}>Submit</button>
     </div>
