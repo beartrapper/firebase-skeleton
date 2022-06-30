@@ -19,6 +19,7 @@
 <br />
 <h1>Reusable Hooks</h1>
 - auth checker<br />
+- Langauge NavBar<br />
 <br />
 <br />
 NOTE: When running in localhost, do specify a firebase.js file with the config in it.
