@@ -2,7 +2,6 @@ import { Button } from "../Components/Button";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { firebaseAuth } from "../firebase";
 
 export const Signup = () => {
   const [password, setPassword] = useState("");
