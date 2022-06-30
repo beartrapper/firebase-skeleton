@@ -3,12 +3,16 @@ import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useAuthStatus } from "../Hooks/useAuthStatus";
+import { useTranslation, Trans } from "react-i18next";
+import { Languages } from "../Components/Languages.js";
 
 export const Signup = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errorSigningUp, setErrorSigningUp] = useState(false);
   const { checkingStatus, loggedIn } = useAuthStatus();
+
+  const { t, i18n } = useTranslation();
 
   const onSignup = () => {
     console.log("in");
@@ -35,10 +39,15 @@ export const Signup = () => {
         <Navigate to="/" />
       ) : (
         <div>
-          <Link to="/login">login?</Link>
+          <Link to="/login">
+            <Trans i18nKey="login">{t("login")}?</Trans>
+          </Link>
           <br />
           <br />
-          Email:{" "}
+          <Languages />
+          <br />
+          <br />
+          <Trans i18nKey="email">{t("Email")}: </Trans>
           <input
             type="text"
             onChange={(e) => {
@@ -47,7 +56,7 @@ export const Signup = () => {
             }}
           />{" "}
           <br />
-          Password:{" "}
+          <Trans i18nKey="password">{t("Password")}: </Trans>
           <input
             type="password"
             onChange={(e) => {
@@ -59,13 +68,15 @@ export const Signup = () => {
           <br />
           <Button
             onClickButton={(event) => onSignup(event)}
-            buttonText="Signup"
+            buttonText={<Trans i18nKey="signup">t("Signup")</Trans>}
           />
           {errorSigningUp ? (
             <>
               <br />
               <br />
-              There seems to be an error signing up
+              <Trans i18nKey="errLoggingIn">
+                {t("There seems to be an error signing up")}
+              </Trans>
             </>
           ) : (
             <></>
