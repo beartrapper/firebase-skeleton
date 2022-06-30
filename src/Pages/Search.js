@@ -19,14 +19,16 @@ export const Search = () => {
   const [long, setLong] = useState(0);
   const [name, setName] = useState("");
   const [searchByName, setSearchByName] = useState(false);
-  const [userAuth, setUserAuth] = useState("");
   const [foundEntries, setFoundEntries] = useState([]);
   const [foundEntriesID, setFoundEntriesID] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [message, setMessage] = useState(false);
   const { checkingStatus, loggedIn } = useAuthStatus();
 
   //query posts
   const searchPosts = async () => {
-    console.log(searchByName);
+    setSearching(true);
+
     let tempEntries = [];
     let tempEntriesID = [];
     const auth = await getAuth();
@@ -46,26 +48,56 @@ export const Search = () => {
       });
     } else {
       //search by location
-      const hash = geohashForLocation([parseInt(lat), parseInt(long)]);
-      const q = query(userPostCollection, where("geoHash", "==", hash));
 
-      const querySnapshot = await getDocs(q);
+      try {
+        const hash = geohashForLocation([parseInt(lat), parseInt(long)]);
+        const q = query(userPostCollection, where("geoHash", "==", hash));
 
-      querySnapshot.forEach((doc) => {
-        tempEntriesID.push(doc.id);
-        tempEntries.push(doc.data());
-      });
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          tempEntriesID.push(doc.id);
+          tempEntries.push(doc.data());
+        });
+      } catch (err) {
+        setSearching(false);
+        setMessage(true);
+      }
     }
+
+    if (tempEntries.length == 0) setMessage("Nothing found");
+
     setFoundEntries(tempEntries);
     setFoundEntriesID(tempEntriesID);
+
+    setSearching(false);
   };
 
   //delete entry
-  const deleteEntry = async (id) => {
+  const deleteEntry = async (id, index) => {
     const auth = await getAuth();
 
     console.log(id);
     await deleteDoc(doc(db, auth.currentUser.uid, id));
+
+    //to make splice work you have to create another array
+    //not just another reference to the array
+    const tempArray = [...foundEntries];
+    const tempArrayID = [...foundEntriesID];
+
+    //remove from local array
+    if (foundEntries.length == 1) {
+      setFoundEntries([]);
+      setFoundEntriesID([]);
+    } else {
+      tempArray.splice(index, 1);
+      tempArrayID.splice(index, 1);
+      console.log(tempArray);
+      console.log(tempArrayID);
+
+      setFoundEntries(tempArray);
+      setFoundEntriesID(tempArrayID);
+    }
   };
 
   return (
@@ -76,6 +108,10 @@ export const Search = () => {
         <Navigate to="/login" />
       ) : (
         <div>
+          <Link to="/">back to post creation?</Link>
+          <br />
+          <br />
+          <br />
           <h1>Query data</h1>
           <hr />
           <button onClick={() => setSearchByName(!searchByName)}>
@@ -91,6 +127,7 @@ export const Search = () => {
               placeholder="input name"
               onChange={(e) => {
                 setFoundEntries([]);
+                setMessage(false);
                 setName(e.target.value);
               }}
             />
@@ -98,18 +135,20 @@ export const Search = () => {
             <>
               <input
                 type="number"
-                placeholder="input latitude"
+                placeholder="input longitude"
                 onChange={(e) => {
                   setFoundEntries([]);
-                  setLat(e.target.value);
+                  setMessage(false);
+                  setLong(e.target.value);
                 }}
               />
               <input
                 type="number"
-                placeholder="input longitude"
+                placeholder="input latitude"
                 onChange={(e) => {
                   setFoundEntries([]);
-                  setLong(e.target.value);
+                  setMessage(false);
+                  setLat(e.target.value);
                 }}
               />
             </>
@@ -118,7 +157,7 @@ export const Search = () => {
           <br />
           <Button
             onClickButton={(event) => searchPosts(event)}
-            buttonText="Search"
+            buttonText={searching ? "Searching" : "Search"}
           />
           <br />
           <hr />
@@ -143,7 +182,9 @@ export const Search = () => {
                     <th>{item.date}</th>
                     <th>
                       <button
-                        onClick={() => deleteEntry(foundEntriesID[index])}
+                        onClick={() =>
+                          deleteEntry(foundEntriesID[index], index)
+                        }
                       >
                         X
                       </button>
@@ -158,6 +199,8 @@ export const Search = () => {
 
           <br />
           <br />
+
+          {message ? "Nothing found" : <></>}
         </div>
       )}
     </>

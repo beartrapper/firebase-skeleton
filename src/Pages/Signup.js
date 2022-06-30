@@ -16,12 +16,10 @@ export const Signup = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
-        const user = userCredential.user;
-        console.log(user);
-        // ...
+        // const user = userCredential.user;
+        //its going to be redirected automatically
       })
       .catch((error) => {
-        const errorCode = error.code;
         const errorMessage = error.message;
         console.log("err: ", errorMessage);
         setErrorSigningUp(true);
