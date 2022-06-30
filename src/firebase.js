@@ -26,6 +26,4 @@ const db = getFirestore(app);
 
 const analytics = getAnalytics(app);
 
-console.log("auht: ", auth);
-
 export { auth, db, app };
