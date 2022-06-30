@@ -24,7 +24,7 @@ export const Login = () => {
       />{" "}
       <br />
       <br />
-      <Button onClick={onLogin()} buttonText="Login" />
+      <Button onClickButton={(event) => onLogin} buttonText="Login" />
       <br />
       <br />
       <Link to="/forgot">forgot password? Fret not!</Link>
