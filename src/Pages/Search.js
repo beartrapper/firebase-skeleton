@@ -47,7 +47,7 @@ export const Search = () => {
     }
   };
 
-  //delete entry
+  //delete entryy
 
   return (
     <div>
