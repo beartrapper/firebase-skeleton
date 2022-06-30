@@ -13,6 +13,8 @@ import { getAuth } from "firebase/auth";
 import { geohashForLocation } from "geofire-common";
 import { useAuthStatus } from "../Hooks/useAuthStatus";
 import { Link, Navigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
+import { Languages } from "../Components/Languages.js";
 
 export const Search = () => {
   const [lat, setLat] = useState(0);
@@ -24,6 +26,8 @@ export const Search = () => {
   const [searching, setSearching] = useState(false);
   const [message, setMessage] = useState(false);
   const { checkingStatus, loggedIn } = useAuthStatus();
+
+  const { t, i18n } = useTranslation();
 
   //query posts
   const searchPosts = async () => {
@@ -108,14 +112,21 @@ export const Search = () => {
         <Navigate to="/login" />
       ) : (
         <div>
-          <Link to="/">back to post creation?</Link>
+          <Link to="/">
+            <Trans i18nKey="query.link">{t("back to post creation")}?</Trans>
+          </Link>
           <br />
           <br />
           <br />
-          <h1>Query data</h1>
+          <Languages />
+          <br />
+          <br />
+          <h1>
+            <Trans i18nKey="query.heading">{t("Query data")}</Trans>
+          </h1>
           <hr />
           <button onClick={() => setSearchByName(!searchByName)}>
-            {searchByName ? "Search by location" : "Search by name"}
+            <Trans i18nKey="query.button1">{t("Change Preference")}</Trans>
           </button>
           <br />
           <br />
@@ -157,7 +168,13 @@ export const Search = () => {
           <br />
           <Button
             onClickButton={(event) => searchPosts(event)}
-            buttonText={searching ? "Searching" : "Search"}
+            buttonText={
+              searching ? (
+                "Searching"
+              ) : (
+                <Trans i18nKey="query.button2">{t("Search")}?</Trans>
+              )
+            }
           />
           <br />
           <hr />
@@ -165,12 +182,24 @@ export const Search = () => {
           {foundEntries.length != 0 ? (
             <table>
               <tr>
-                <th>id</th>
-                <th>name</th>
-                <th>lat</th>
-                <th>long</th>
-                <th>date</th>
-                <th>action</th>
+                <th>
+                  <Trans i18nKey="homePage.ID">{t("ID")}: </Trans>
+                </th>
+                <th>
+                  <Trans i18nKey="homePage.name">{t("Name")}: </Trans>
+                </th>
+                <th>
+                  <Trans i18nKey="homePage.latitude">{t("Latitude")}: </Trans>
+                </th>
+                <th>
+                  <Trans i18nKey="homePage.longitude">{t("Longitude")}: </Trans>
+                </th>
+                <th>
+                  <Trans i18nKey="homePage.date">{t("Date")}: </Trans>
+                </th>
+                <th>
+                  <Trans i18nKey="query.action">{t("action")}: </Trans>
+                </th>
               </tr>
               {foundEntries.map((item, index) => {
                 return (

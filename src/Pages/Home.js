@@ -5,6 +5,8 @@ import { db } from "../firebase";
 import geofire, { geohashForLocation } from "geofire-common";
 import { useAuthStatus } from "../Hooks/useAuthStatus";
 import { Link, Navigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
+import { Languages } from "../Components/Languages.js";
 
 export const Home = () => {
   //states
@@ -17,6 +19,8 @@ export const Home = () => {
   const [err, setErr] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { checkingStatus, loggedIn } = useAuthStatus();
+
+  const { t, i18n } = useTranslation();
 
   //functions
   const submitInfo = async () => {
@@ -68,12 +72,21 @@ export const Home = () => {
         <Navigate to="/login" />
       ) : (
         <div>
-          <Link to="/search">Navigate to Search Page</Link>
+          <Link to="/search">
+            <Trans i18nKey="homePage.navigate">
+              {t("Navigate to Search Page")}:{" "}
+            </Trans>
+          </Link>
           <br />
           <br />
           <br />
-          <h1>Add new Post</h1>
-          ID:{" "}
+          <Languages />
+          <br />
+          <br />
+          <h1>
+            <Trans i18nKey="homePage.heading">{t("Add new Post")}: </Trans>
+          </h1>
+          <Trans i18nKey="homePage.ID">{t("ID")}: </Trans>
           <input
             type="text"
             onChange={(e) => {
@@ -83,7 +96,7 @@ export const Home = () => {
             }}
           />
           <br />
-          Name:{" "}
+          <Trans i18nKey="homePage.name">{t("Name")}: </Trans>
           <input
             type="text"
             onChange={(e) => {
@@ -93,9 +106,10 @@ export const Home = () => {
             }}
           />
           <br />
-          Date: <input type="text" value={date} readOnly />
+          <Trans i18nKey="homePage.date">{t("Date")}: </Trans>
+          <input type="text" value={date} readOnly />
           <br />
-          Latitude:{" "}
+          <Trans i18nKey="homePage.latitude">{t("Latitude")}: </Trans>
           <input
             type="number"
             onChange={(e) => {
@@ -106,7 +120,8 @@ export const Home = () => {
             placeholder="b/w 180 and -180"
           />
           <br />
-          Longitude:{" "}
+          <Trans i18nKey="homePage.longitude">{t("Longitude")}: </Trans>
+
           <input
             type="number"
             onChange={(e) => {
@@ -118,12 +133,32 @@ export const Home = () => {
           />
           <br />
           <button onClick={() => submitInfo()}>
-            {submitting ? "Submitting" : "Submit"}
+            {submitting ? (
+              <Trans i18nKey="homePage.submitting">{t("Submitting")} </Trans>
+            ) : (
+              <Trans i18nKey="homePage.submit">{t("Submit")} </Trans>
+            )}
           </button>
           {/* err for post not submitted */}
-          {err ? <p>Error submitting post, check values please</p> : <></>}
+          {err ? (
+            <p>
+              <Trans i18nKey="homePage.err">
+                {t("Error submitting post, check values please")}
+              </Trans>
+            </p>
+          ) : (
+            <></>
+          )}
           {/* message for post submitted */}
-          {postSubmitted ? <p>POST SUBMITTED SUCCESSFULLY</p> : <></>}
+          {postSubmitted ? (
+            <p>
+              <Trans i18nKey="homePage.success">
+                {t("POST SUBMITTED SUCCESSFULLY")}
+              </Trans>
+            </p>
+          ) : (
+            <></>
+          )}
         </div>
       )}
     </>
